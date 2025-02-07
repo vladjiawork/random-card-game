@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隨機抽籤遊戲</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 50px;
+        }
+        .card {
+            width: 100px;
+            height: 150px;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .card.flipped {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>隨機抽籤遊戲</h1>
+    <div class="container" id="cardContainer"></div>
+
+    <script>
+        // Firebase 設定（請替換為你的 Firebase 設定）
+  const firebaseConfig = {
+    apiKey: "AIzaSyCo8MrM2dsjMI0337qtUinKVUxh5GpWV5M",
+    authDomain: "site-random-4e617.firebaseapp.com",
+    projectId: "site-random-4e617",
+    storageBucket: "site-random-4e617.firebasestorage.app",
+    messagingSenderId: "537341466141",
+    appId: "1:537341466141:web:1b9805ddf4c705b6c298f4",
+    measurementId: "G-8R8K8YCMRR"
+  };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const gameRef = db.collection("game").doc("cards");
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            const container = document.getElementById("cardContainer");
+            
+            let gameData = await gameRef.get();
+            if (!gameData.exists) {
+                const frontNumbers = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
+                const backNumbers = Array.from({ length: 10 }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+                
+                const cardData = frontNumbers.map((num, index) => ({
+                    front: num,
+                    back: backNumbers[index],
+                    flipped: false
+                }));
+                
+                await gameRef.set({ cards: cardData });
+            }
+            
+            gameRef.onSnapshot((doc) => {
+                container.innerHTML = "";
+                const cards = doc.data().cards;
+                cards.forEach((card, index) => {
+                    const cardDiv = document.createElement("div");
+                    cardDiv.classList.add("card");
+                    cardDiv.textContent = card.flipped ? card.back : card.front;
+                    if (card.flipped) cardDiv.classList.add("flipped");
+                    
+                    cardDiv.addEventListener("click", async function () {
+                        if (!card.flipped) {
+                            cards[index].flipped = true;
+                            await gameRef.update({ cards });
+                        }
+                    });
+                    
+                    container.appendChild(cardDiv);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
