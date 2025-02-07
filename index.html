@@ -3,96 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>隨機抽籤遊戲</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <title>抽牌遊戲</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-        }
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 50px;
+        .card-container {
+            display: inline-block;
+            width: 100px;
+            height: 150px;
+            margin: 10px;
+            perspective: 1000px; /* 設定透視效果 */
         }
         .card {
             width: 100px;
             height: 150px;
-            background-color: #3498db;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: lightblue;
+            text-align: center;
+            line-height: 150px;
             font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
             border-radius: 10px;
-            transition: transform 0.3s;
+            cursor: pointer;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
         }
-        .card.flipped {
-            background-color: #e74c3c;
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+        .card .back {
+            position: absolute;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            background-color: lightgreen;
+        }
+        .card .front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
-    <h1>隨機抽籤遊戲</h1>
-    <div class="container" id="cardContainer"></div>
+    <h1>點擊牌子來顯示隨機數字</h1>
+    
+    <!-- 牌子 -->
+    <div id="cards">
+        <div class="card-container">
+            <div class="card" data-number="1">
+                <div class="front">A</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="2">
+                <div class="front">B</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="3">
+                <div class="front">C</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="4">
+                <div class="front">D</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="5">
+                <div class="front">E</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="6">
+                <div class="front">F</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="7">
+                <div class="front">G</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="8">
+                <div class="front">H</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="9">
+                <div class="front">I</div>
+                <div class="back"></div>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="card" data-number="10">
+                <div class="front">J</div>
+                <div class="back"></div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Firebase 設定（請替換為你的 Firebase 設定）
-  const firebaseConfig = {
-    apiKey: "AIzaSyCo8MrM2dsjMI0337qtUinKVUxh5GpWV5M",
-    authDomain: "site-random-4e617.firebaseapp.com",
-    projectId: "site-random-4e617",
-    storageBucket: "site-random-4e617.firebasestorage.app",
-    messagingSenderId: "537341466141",
-    appId: "1:537341466141:web:1b9805ddf4c705b6c298f4",
-    measurementId: "G-8R8K8YCMRR"
-  };
-        
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const gameRef = db.collection("game").doc("cards");
-
-        document.addEventListener("DOMContentLoaded", async function () {
-            const container = document.getElementById("cardContainer");
-            
-            let gameData = await gameRef.get();
-            if (!gameData.exists) {
-                const frontNumbers = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
-                const backNumbers = Array.from({ length: 10 }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
-                
-                const cardData = frontNumbers.map((num, index) => ({
-                    front: num,
-                    back: backNumbers[index],
-                    flipped: false
-                }));
-                
-                await gameRef.set({ cards: cardData });
+        // 隨機打亂 1-10 的數字
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // 交換元素
             }
-            
-            gameRef.onSnapshot((doc) => {
-                container.innerHTML = "";
-                const cards = doc.data().cards;
-                cards.forEach((card, index) => {
-                    const cardDiv = document.createElement("div");
-                    cardDiv.classList.add("card");
-                    cardDiv.textContent = card.flipped ? card.back : card.front;
-                    if (card.flipped) cardDiv.classList.add("flipped");
-                    
-                    cardDiv.addEventListener("click", async function () {
-                        if (!card.flipped) {
-                            cards[index].flipped = true;
-                            await gameRef.update({ cards });
-                        }
-                    });
-                    
-                    container.appendChild(cardDiv);
-                });
+        }
+
+        // 初始數字 1 到 10
+        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        shuffleArray(numbers); // 打亂數字順序
+
+        // 設定每張卡片對應的數字
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            const back = card.querySelector('.back');
+            back.textContent = numbers[index]; // 設定每張牌的背面數字
+        });
+
+        // 監聽牌子點擊事件
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                // 翻轉牌子並添加 "flipped" 類別
+                if (!card.classList.contains('card-flipped')) {
+                    card.classList.add('card-flipped');
+                }
             });
         });
     </script>
