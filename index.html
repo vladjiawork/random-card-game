@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>抽牌遊戲</title>
+    <title>攤位抽籤</title>
     <style>
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+        }
+
         .card-container {
             display: inline-block;
             width: 100px;
@@ -25,7 +29,7 @@
             transform-style: preserve-3d;
         }
         .card-flipped {
-            transform: rotateY(180deg);
+            transform: rotateY(180deg); /* 讓卡片翻轉 */
         }
         .card .back {
             position: absolute;
@@ -38,6 +42,8 @@
             align-items: center;
             font-size: 36px;
             background-color: lightgreen;
+            text-align: center;
+            line-height: 1.2; /* 調整行距 */
         }
         .card .front {
             position: absolute;
@@ -53,98 +59,214 @@
 <body>
     <h1>點擊牌子來顯示隨機數字</h1>
     
+    <!-- 玩家選擇 -->
+    <label for="player-name">選擇你的名字：</label>
+    <select id="player-name">
+      <option value="甲">甲</option>
+      <option value="乙">乙</option>
+      <option value="丙">丙</option>
+      <option value="丁">丁</option>
+      <option value="戊">戊</option>
+      <option value="己">己</option>
+      <option value="庚">庚</option>
+      <option value="辛">辛</option>
+      <option value="壬">壬</option>
+      <option value="揆">揆</option>
+    </select>
+
     <!-- 牌子 -->
     <div id="cards">
-        <div class="card-container">
-            <div class="card" data-number="1">
+        <div class="card-container" data-card="1">
+            <div class="card">
                 <div class="front">A</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="2">
+        <div class="card-container" data-card="2">
+            <div class="card">
                 <div class="front">B</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="3">
+        <div class="card-container" data-card="3">
+            <div class="card">
                 <div class="front">C</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="4">
+        <div class="card-container" data-card="4">
+            <div class="card">
                 <div class="front">D</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="5">
+        <div class="card-container" data-card="5">
+            <div class="card">
                 <div class="front">E</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="6">
+        <div class="card-container" data-card="6">
+            <div class="card">
                 <div class="front">F</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="7">
+        <div class="card-container" data-card="7">
+            <div class="card">
                 <div class="front">G</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="8">
+        <div class="card-container" data-card="8">
+            <div class="card">
                 <div class="front">H</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="9">
+        <div class="card-container" data-card="9">
+            <div class="card">
                 <div class="front">I</div>
                 <div class="back"></div>
             </div>
         </div>
-        <div class="card-container">
-            <div class="card" data-number="10">
+        <div class="card-container" data-card="10">
+            <div class="card">
                 <div class="front">J</div>
                 <div class="back"></div>
             </div>
         </div>
     </div>
 
-    <script>
-        // 隨機打亂 1-10 的數字
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // 交換元素
-            }
+    <!-- 復原按鈕 -->
+    <button id="reset-button">復原</button>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpDyw8s5ybHoqjPdYE07XrFt2iXa5Z1s8",
+            authDomain: "cisirrandom.firebaseapp.com",
+            databaseURL: "https://cisirrandom-default-rtdb.firebaseio.com",
+            projectId: "cisirrandom",
+            storageBucket: "cisirrandom.firebasestorage.app",
+            messagingSenderId: "422201639302",
+            appId: "1:422201639302:web:e64b9d321d9d3887dd2c07",
+            measurementId: "G-ZBPQQ6FJ3W"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // 隨機數字生成邏輯
+        function getRandomUniqueNumber(usedNumbers) {
+            let randomNum;
+            do {
+                randomNum = Math.floor(Math.random() * 10) + 1;
+            } while (usedNumbers.includes(randomNum));
+            usedNumbers.push(randomNum);
+            return randomNum;
         }
 
-        // 初始數字 1 到 10
-        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        shuffleArray(numbers); // 打亂數字順序
+        // 設定卡片點擊事件
+        const cards = document.querySelectorAll('.card-container');
+        let selectedCards = {};
+        let usedNumbers = [];
 
-        // 設定每張卡片對應的數字
-        const cards = document.querySelectorAll('.card');
-        cards.forEach((card, index) => {
-            const back = card.querySelector('.back');
-            back.textContent = numbers[index]; // 設定每張牌的背面數字
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const cardNumber = card.getAttribute('data-card');
+                const playerName = document.getElementById('player-name').value;
+
+                // 檢查玩家是否已經選過卡片
+                if (selectedCards[playerName]) {
+                    alert(playerName + " 已經選過卡片，無法再次選擇！");
+                    return;
+                }
+
+                // 確保卡片未被選擇過
+                const cardRef = ref(database, 'cards/' + cardNumber);
+                get(cardRef).then(snapshot => {
+                    if (!snapshot.exists()) {
+                        console.log("卡片不存在！");
+                        return;
+                    }
+                    const cardData = snapshot.val();
+
+                    // 如果這張卡片尚未被選擇，則更新資料
+                    if (!cardData.selected) {
+                        const randomNum = getRandomUniqueNumber(usedNumbers);  // 獲得不重複的數字
+
+                        update(cardRef, {
+                            selected: true,
+                            player: playerName,
+                            number: randomNum
+                        }).then(() => {
+                            console.log("卡片 " + cardNumber + " 被 " + playerName + " 選擇");
+                            card.querySelector('.back').innerHTML = `${playerName}<br><br>${randomNum}`;  // 顯示選擇者和數字
+                            card.querySelector('.card').classList.add('card-flipped');  // 觸發翻轉動畫
+                        }).catch(error => {
+                            console.error("更新資料失敗：", error);
+                        });
+
+                        // 記錄該玩家已選擇卡片
+                        selectedCards[playerName] = true;
+
+                        // 禁用所有卡片
+                        disableAllCards();
+                    } else {
+                        alert("這張卡片已經被選擇過了！");
+                    }
+                });
+            });
         });
 
-        // 監聽牌子點擊事件
-        cards.forEach(card => {
-            card.addEventListener('click', function() {
-                // 翻轉牌子並添加 "flipped" 類別
-                if (!card.classList.contains('card-flipped')) {
-                    card.classList.add('card-flipped');
-                }
+        // 禁用所有卡片
+        function disableAllCards() {
+            cards.forEach(card => {
+                card.style.pointerEvents = 'none';
             });
+        }
+
+        // 重新整理頁面時，翻轉已選過的卡片並更新選擇紀錄
+        window.onload = () => {
+            selectedCards = {}; // 清空選擇紀錄
+            cards.forEach(card => {
+                const cardNumber = card.getAttribute('data-card');
+                const cardRef = ref(database, 'cards/' + cardNumber);
+
+                get(cardRef).then(snapshot => {
+                    if (snapshot.exists()) {
+                        const cardData = snapshot.val();
+
+                        if (cardData.selected) {
+                            card.querySelector('.back').innerHTML = `${cardData.player}<br><br>${cardData.number}`;
+                            card.querySelector('.card').classList.add('card-flipped');
+                            selectedCards[cardData.player] = true;  // 更新選擇紀錄
+                            usedNumbers.push(cardData.number);  // 更新已選擇數字
+                        }
+                    }
+                });
+            });
+        };
+
+        // 設定復原按鈕的事件
+        document.getElementById('reset-button').addEventListener('click', () => {
+            // 遍歷所有卡片，將其狀態重置
+            cards.forEach(card => {
+                const cardNumber = card.getAttribute('data-card');
+                const cardRef = ref(database, 'cards/' + cardNumber);
+                update(cardRef, {
+                    selected: false,
+                    player: '',
+                    number: ''
+                });
+            });
+
+            // 刷新頁面
+            window.location.reload();
         });
     </script>
 </body>
