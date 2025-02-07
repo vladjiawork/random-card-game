@@ -14,7 +14,7 @@
             width: 100px;
             height: 150px;
             margin: 10px;
-            perspective: 1000px; /* 設定透視效果 */
+            perspective: 1000px;
         }
         .card {
             width: 100px;
@@ -27,124 +27,69 @@
             cursor: pointer;
             transition: transform 0.6s;
             transform-style: preserve-3d;
+            position: relative;
         }
         .card-flipped {
-            transform: rotateY(180deg); /* 讓卡片翻轉 */
-        }
-        .card .back {
-            position: absolute;
-            backface-visibility: hidden;
             transform: rotateY(180deg);
+        }
+        .card .back, .card .front {
+            position: absolute;
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        .card .back {
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
             font-size: 36px;
             background-color: lightgreen;
             text-align: center;
-            line-height: 1.2; /* 調整行距 */
-        }
-        .card .front {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
+            line-height: 1.2;
         }
     </style>
 </head>
 <body>
     <h1>點擊牌子來抽取攤位順序</h1>
-    
-    <!-- 玩家選擇 -->
-    <label for="player-name">選擇你的名字：</label>
+
+    <label for="player-name">選擇你的店家：</label>
     <select id="player-name">
-      <option value="甲">甲</option>
-      <option value="乙">乙</option>
-      <option value="丙">丙</option>
-      <option value="丁">丁</option>
-      <option value="戊">戊</option>
-      <option value="己">己</option>
-      <option value="庚">庚</option>
-      <option value="辛">辛</option>
-      <option value="壬">壬</option>
-      <option value="揆">揆</option>
+        <option value="" disabled selected>請選擇</option>
+        <option value="甲">甲</option>
+        <option value="乙">乙</option>
+        <option value="丙">丙</option>
+        <option value="丁">丁</option>
+        <option value="戊">戊</option>
+        <option value="己">己</option>
+        <option value="庚">庚</option>
+        <option value="辛">辛</option>
+        <option value="壬">壬</option>
+        <option value="揆">揆</option>
     </select>
 
-    <!-- 牌子 -->
+    <label for="verify-name">輸入你的店名來驗證：</label>
+    <input type="text" id="verify-name" placeholder="請輸入你的店名">
+
     <div id="cards">
-        <div class="card-container" data-card="1">
-            <div class="card">
-                <div class="front">A</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="2">
-            <div class="card">
-                <div class="front">B</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="3">
-            <div class="card">
-                <div class="front">C</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="4">
-            <div class="card">
-                <div class="front">D</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="5">
-            <div class="card">
-                <div class="front">E</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="6">
-            <div class="card">
-                <div class="front">F</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="7">
-            <div class="card">
-                <div class="front">G</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="8">
-            <div class="card">
-                <div class="front">H</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="9">
-            <div class="card">
-                <div class="front">I</div>
-                <div class="back"></div>
-            </div>
-        </div>
-        <div class="card-container" data-card="10">
-            <div class="card">
-                <div class="front">J</div>
-                <div class="back"></div>
-            </div>
-        </div>
+        <!-- 10 張卡片 -->
+        <div class="card-container" data-card="1"><div class="card"><div class="front">A</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="2"><div class="card"><div class="front">B</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="3"><div class="card"><div class="front">C</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="4"><div class="card"><div class="front">D</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="5"><div class="card"><div class="front">E</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="6"><div class="card"><div class="front">F</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="7"><div class="card"><div class="front">G</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="8"><div class="card"><div class="front">H</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="9"><div class="card"><div class="front">I</div><div class="back"></div></div></div>
+        <div class="card-container" data-card="10"><div class="card"><div class="front">J</div><div class="back"></div></div></div>
     </div>
 
-    <!-- 復原按鈕 -->
-    <!-- <button id="reset-button">復原遊戲</button>-->
+    <!-- button id="reset-button">復原遊戲</button> -->
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, get, update, set, remove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBpDyw8s5ybHoqjPdYE07XrFt2iXa5Z1s8",
@@ -159,125 +104,78 @@
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+        let usedNumbers = [];
 
-        // 隨機數字生成邏輯
-        function getRandomUniqueNumber(usedNumbers) {
-            let randomNum;
+        function getRandomNumber() {
+            let num;
             do {
-                randomNum = Math.floor(Math.random() * 10) + 1;
-            } while (usedNumbers.includes(randomNum));
-            usedNumbers.push(randomNum);
-            return randomNum;
+                num = Math.floor(Math.random() * 10) + 1;
+            } while (usedNumbers.includes(num));
+            usedNumbers.push(num);
+            return num;
         }
 
-        // 設定卡片點擊事件
         const cards = document.querySelectorAll('.card-container');
         let selectedCards = {};
-        let usedNumbers = [];
-        
-        // 禁用卡片點擊
-        function disableAllCards() {
-            cards.forEach(card => {
-                card.style.pointerEvents = 'none';
-            });
-        }
-
-        // 啟用卡片點擊
-        function enableAllCards() {
-            cards.forEach(card => {
-                card.style.pointerEvents = 'auto';
-            });
-        }
-
-        // 先禁用卡片，並延遲 2 秒後啟用
-        disableAllCards();
-        setTimeout(enableAllCards, 2000);
 
         cards.forEach(card => {
             card.addEventListener('click', () => {
                 const cardNumber = card.getAttribute('data-card');
                 const playerName = document.getElementById('player-name').value;
+                const verifyName = document.getElementById('verify-name').value.trim();
 
-                // 檢查玩家是否已經選過卡片
+                if (!playerName) {
+                    alert("請選擇你的名字！");
+                    return;
+                }
+
+                if (verifyName !== playerName) {
+                    alert("輸入的名字不符，請重新輸入！");
+                    return;
+                }
+
                 if (selectedCards[playerName]) {
                     alert(playerName + " 已經選過卡片，無法再次選擇！");
                     return;
                 }
 
-                // 確保卡片未被選擇過
                 const cardRef = ref(database, 'cards/' + cardNumber);
                 get(cardRef).then(snapshot => {
-                    if (!snapshot.exists()) {
-                        console.log("卡片不存在！");
-                        return;
-                    }
-                    const cardData = snapshot.val();
-
-                    // 如果這張卡片尚未被選擇，則更新資料
-                    if (!cardData.selected) {
-                        const randomNum = getRandomUniqueNumber(usedNumbers);  // 獲得不重複的數字
-
-                        update(cardRef, {
-                            selected: true,
-                            player: playerName,
-                            number: randomNum
-                        }).then(() => {
-                            console.log("卡片 " + cardNumber + " 被 " + playerName + " 選擇");
-                            card.querySelector('.back').innerHTML = `${playerName}<br><br>${randomNum}`;  // 顯示選擇者和數字
-                            card.querySelector('.card').classList.add('card-flipped');  // 觸發翻轉動畫
-                        }).catch(error => {
-                            console.error("更新資料失敗：", error);
-                        });
-
-                        // 記錄該玩家已選擇卡片
-                        selectedCards[playerName] = true;
-
-                        // 禁用所有卡片
-                        disableAllCards();
+                    if (snapshot.exists() && snapshot.val().selected) {
+                        alert("這張卡片已被選擇！");
                     } else {
-                        alert("這張卡片已經被選擇過了！");
+                        let randomNum = getRandomNumber();
+                        update(cardRef, { selected: true, player: playerName, number: randomNum }).then(() => {
+                            card.querySelector('.back').innerHTML = `${playerName}<br>${randomNum}`;
+                            card.querySelector('.card').classList.add('card-flipped');
+                            selectedCards[playerName] = true;
+                        });
                     }
                 });
             });
         });
 
-        // 重新整理頁面時，翻轉已選過的卡片並更新選擇紀錄
         window.onload = () => {
-            selectedCards = {}; // 清空選擇紀錄
             cards.forEach(card => {
                 const cardNumber = card.getAttribute('data-card');
                 const cardRef = ref(database, 'cards/' + cardNumber);
 
                 get(cardRef).then(snapshot => {
-                    if (snapshot.exists()) {
-                        const cardData = snapshot.val();
-
-                        if (cardData.selected) {
-                            card.querySelector('.back').innerHTML = `${cardData.player}<br><br>${cardData.number}`;
-                            card.querySelector('.card').classList.add('card-flipped');
-                            selectedCards[cardData.player] = true;  // 更新選擇紀錄
-                            usedNumbers.push(cardData.number);  // 更新已選擇數字
-                        }
+                    if (snapshot.exists() && snapshot.val().selected) {
+                        const data = snapshot.val();
+                        card.querySelector('.back').innerHTML = `${data.player}<br>${data.number}`;
+                        card.querySelector('.card').classList.add('card-flipped');
+                        selectedCards[data.player] = true;
                     }
                 });
             });
         };
 
-        // 設定復原按鈕的事件
         document.getElementById('reset-button').addEventListener('click', () => {
-            // 遍歷所有卡片，將其狀態重置
-            cards.forEach(card => {
-                const cardNumber = card.getAttribute('data-card');
-                const cardRef = ref(database, 'cards/' + cardNumber);
-                update(cardRef, {
-                    selected: false,
-                    player: '',
-                    number: ''
-                });
+            remove(ref(database, 'cards')).then(() => {
+                alert("遊戲已復原！");
+                window.location.reload();
             });
-
-            // 刷新頁面
-            window.location.reload();
         });
     </script>
 </body>
