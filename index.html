@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>攤位抽籤</title>
+    <title>攤位順序抽籤</title>
     <style>
         body {
             font-family: 'Microsoft JhengHei', sans-serif;
@@ -57,9 +57,9 @@
     </style>
 </head>
 <body>
-    <h1>點擊牌子來抽籤攤位順序</h1>
+    <h1>點擊牌子來抽取攤位順序</h1>
     
-    <!-- 廠家選擇 -->
+    <!-- 玩家選擇 -->
     <label for="player-name">選擇你的名字：</label>
     <select id="player-name">
       <option value="甲">甲</option>
@@ -139,7 +139,7 @@
     </div>
 
     <!-- 復原按鈕 -->
-        <!--如果要使用按鈕，把前後的符號刪除 <button id="reset-button">復原</button> -->
+    <!-- <button id="reset-button">復原遊戲</button>-->
 
     <!-- Firebase SDK -->
     <script type="module">
@@ -174,6 +174,24 @@
         const cards = document.querySelectorAll('.card-container');
         let selectedCards = {};
         let usedNumbers = [];
+        
+        // 禁用卡片點擊
+        function disableAllCards() {
+            cards.forEach(card => {
+                card.style.pointerEvents = 'none';
+            });
+        }
+
+        // 啟用卡片點擊
+        function enableAllCards() {
+            cards.forEach(card => {
+                card.style.pointerEvents = 'auto';
+            });
+        }
+
+        // 先禁用卡片，並延遲 2 秒後啟用
+        disableAllCards();
+        setTimeout(enableAllCards, 2000);
 
         cards.forEach(card => {
             card.addEventListener('click', () => {
@@ -222,13 +240,6 @@
                 });
             });
         });
-
-        // 禁用所有卡片
-        function disableAllCards() {
-            cards.forEach(card => {
-                card.style.pointerEvents = 'none';
-            });
-        }
 
         // 重新整理頁面時，翻轉已選過的卡片並更新選擇紀錄
         window.onload = () => {
