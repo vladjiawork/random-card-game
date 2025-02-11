@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>攤位順序抽籤</title>
+    <title>品牌順序抽籤</title>
     <style>
         body {
             font-family: 'Microsoft JhengHei', sans-serif;
@@ -53,39 +53,52 @@
 <body>
     <h1>點擊牌子來抽取攤位順序</h1>
 
-    <label for="player-name">選擇你的店家：</label>
+    <label for="player-name">選擇您的品牌：</label>
     <select id="player-name">
         <option value="" disabled selected>請選擇</option>
-        <option value="甲">甲</option>
-        <option value="乙">乙</option>
-        <option value="丙">丙</option>
-        <option value="丁">丁</option>
-        <option value="戊">戊</option>
-        <option value="己">己</option>
-        <option value="庚">庚</option>
-        <option value="辛">辛</option>
-        <option value="壬">壬</option>
-        <option value="揆">揆</option>
+<option value="品牌1">品牌1</option>
+<option value="品牌2">品牌2</option>
+<option value="品牌3">品牌3</option>
+<option value="品牌4">品牌4</option>
+<option value="品牌5">品牌5</option>
+<option value="品牌6">品牌6</option>
+<option value="品牌7">品牌7</option>
+<option value="品牌8">品牌8</option>
+<option value="品牌9">品牌9</option>
+<option value="品牌10">品牌10</option>
+<option value="品牌11">品牌11</option>
+<option value="品牌12">品牌12</option>
+<option value="品牌13">品牌13</option>
     </select>
 
-    <label for="verify-name">輸入你的店名來驗證：</label>
-    <input type="text" id="verify-name" placeholder="請輸入你的店名">
+    <label for="verify-name">輸入你的品牌來驗證：</label>
+    <input type="text" id="verify-name" placeholder="請輸入你的品牌">
 
     <div id="cards">
-        <!-- 10 張卡片 -->
-        <div class="card-container" data-card="1"><div class="card"><div class="front">A</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="2"><div class="card"><div class="front">B</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="3"><div class="card"><div class="front">C</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="4"><div class="card"><div class="front">D</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="5"><div class="card"><div class="front">E</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="6"><div class="card"><div class="front">F</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="7"><div class="card"><div class="front">G</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="8"><div class="card"><div class="front">H</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="9"><div class="card"><div class="front">I</div><div class="back"></div></div></div>
-        <div class="card-container" data-card="10"><div class="card"><div class="front">J</div><div class="back"></div></div></div>
+        <!-- 49 張卡片 -->
+        <script>
+            const chineseNumbers = [
+                "一", "二", "三", "四", "五", "六", "七", "八", "九", "十",
+                "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十",
+                "二十一", "二十二", "二十三", "二十四", "二十五", "二十六", "二十七", "二十八", "二十九", "三十",
+                "三十一", "三十二", "三十三", "三十四", "三十五", "三十六", "三十七", "三十八", "三十九", "四十",
+                "四十一", "四十二", "四十三", "四十四", "四十五", "四十六", "四十七", "四十八", "四十九"
+            ];
+            
+            let cardHTML = "";
+            for (let i = 0; i < 49; i++) {
+                cardHTML += `<div class="card-container" data-card="${i+1}">
+                                <div class="card">
+                                    <div class="front">${chineseNumbers[i]}</div>
+                                    <div class="back"></div>
+                                </div>
+                             </div>`;
+            }
+            document.write(cardHTML);
+        </script>
     </div>
 
-    <!-- button id="reset-button">復原遊戲</button> -->
+    <button id="reset-button">復原遊戲</button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
@@ -109,7 +122,7 @@
         function getRandomNumber() {
             let num;
             do {
-                num = Math.floor(Math.random() * 10) + 1;
+                num = Math.floor(Math.random() * 49) + 1;
             } while (usedNumbers.includes(num));
             usedNumbers.push(num);
             return num;
@@ -125,12 +138,12 @@
                 const verifyName = document.getElementById('verify-name').value.trim();
 
                 if (!playerName) {
-                    alert("請選擇你的店名！");
+                    alert("請選擇你的品牌！");
                     return;
                 }
 
                 if (verifyName !== playerName) {
-                    alert("輸入的店名不符，請重新輸入！");
+                    alert("輸入的品牌不符，請重新輸入！");
                     return;
                 }
 
